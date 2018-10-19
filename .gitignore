@@ -26,3 +26,4 @@ bin/
 *.zip
 *.tar.gz
 *.rar
+/.metadata/
