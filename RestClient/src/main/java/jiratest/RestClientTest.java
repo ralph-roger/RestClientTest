@@ -11,6 +11,7 @@ public class RestClientTest {
 		if(args.length > 0) {
 			String issue = rcl.createIssue("SCRUM", 10005L, args[0]);
 			System.out.println("==========> " + issue);
+			
 		}
 		
 		rcl.updateIssueDescription("SCRUM-11", "Die Beschreibung für SCRUM-11 geändert");
