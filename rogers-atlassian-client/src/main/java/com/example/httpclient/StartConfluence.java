@@ -6,11 +6,14 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.example.httpclient.TestJson2Java4.Data;
+import com.example.httpclient.objects.Content;
+import com.example.httpclient.objects.Content2;
+import com.example.httpclient.objects.Results;
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpContent;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestFactory;
-import com.google.api.client.http.HttpResponse;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.UrlEncodedContent;
 import com.google.api.client.http.javanet.NetHttpTransport;
@@ -19,6 +22,7 @@ import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.JsonObjectParser;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.Key;
+import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 public class StartConfluence {
@@ -69,15 +73,19 @@ public class StartConfluence {
 		GenericUrl url = new GenericUrl(TEST_URL);
 		url.put("spaceKey", "TES");
 		url.put("title", "Testseite");
+		url.put("expand", "space,body.view,version,container");
 		HttpRequest req = reqFactory().buildGetRequest(url);
-		
 		req.setParser(new JsonObjectParser(JSON_FACTORY));
-		Type type = new TypeToken<String>() {}.getType();
-		String test = (String)req.execute().parseAs(type);
-		// @SuppressWarnings("unused")
-		// HttpResponse resp = req.execute();
-		// System.out.println("Content -----> : " + resp.getContent().toString());
-		System.out.println("String TEst:  " + test);
+		String json = (String)req.execute().parseAsString();
+		Results results  = new Gson().fromJson(json, Results.class);
+		System.out.println("Json: " + json);
+		for (Content2 content : results.getResults()) {
+			System.out.println("Content: Id: " + content.getId());
+			System.out.println("Content: Title: " + content.getTitle());
+			System.out.println("Content: Type: " + content.getType());
+			System.out.println("Content: Space: " + content.getSpace().getName());
+		}
+
 	}
 
 	/**
