@@ -10,11 +10,11 @@ public class RestClientTest {
 		MyJiraClient rcl = new MyJiraClient("rroger_de", "roger03", "http://localhost:8080");
 		if(args.length > 0) {
 			String issue = rcl.createIssue("SCRUM", 10005L, args[0]);
-			System.out.println("==========> " + issue);
+			System.out.println("==========> Neuer Issue Nr ====> " + issue);
 			
 		}
 		
-		rcl.updateIssueDescription("SCRUM-11", "Die Beschreibung für SCRUM-11 geändert");
+		rcl.updateIssueDescription("SCRUM-11", "Die Beschreibung für SCRUM-11 nochmal geändert");
 		String issueInfo = rcl.getIssueInfo("SCRUM-11");
 		System.out.println("==========> Info: " + issueInfo);
 		List<Issue> issues = rcl.getListeIssues("project=SCRUM_Projekt");

@@ -1,7 +1,5 @@
 package com.example.httpclient;
 
-import java.util.List;
-
 import com.google.api.client.util.Key;
 import com.google.gson.Gson;
 

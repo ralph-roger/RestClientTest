@@ -6,8 +6,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.example.httpclient.TestJson2Java4.Data;
-import com.example.httpclient.objects.Content;
 import com.example.httpclient.objects.Content2;
 import com.example.httpclient.objects.Results;
 import com.google.api.client.http.GenericUrl;
@@ -25,7 +23,7 @@ import com.google.api.client.util.Key;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-public class StartConfluence {
+public class GetConfluencePage {
 
 	private static final JsonFactory JSON_FACTORY = new JacksonFactory();
 
@@ -93,6 +91,7 @@ public class StartConfluence {
 	 *
 	 * @throws IOException
 	 */
+	@SuppressWarnings("unused")
 	private static void parsePublicApiJsonResponse() throws IOException {
 		GenericUrl url = new GenericUrl("https://api.github.com/users");
 		url.put("per_page", 5);
@@ -121,6 +120,7 @@ public class StartConfluence {
 	 *
 	 * @throws IOException
 	 */
+	@SuppressWarnings("unused")
 	private static void postComplexJsonData() throws IOException {
 		GenericUrl url = new GenericUrl(TEST_URL);
 		Map<String, Object> data = new LinkedHashMap<>();
@@ -140,6 +140,7 @@ public class StartConfluence {
 	 *
 	 * @throws IOException
 	 */
+	@SuppressWarnings("unused")
 	private static void postRequestFormUrlencoded() throws IOException {
 		GenericUrl url = new GenericUrl(TEST_URL);
 		Map<String, Object> data = new LinkedHashMap<>();
@@ -155,6 +156,7 @@ public class StartConfluence {
 	 *
 	 * @throws IOException
 	 */
+	@SuppressWarnings("unused")
 	private static void postSimpleJsonData() throws IOException {
 		GenericUrl url = new GenericUrl(TEST_URL);
 		Map<String, Object> data = new LinkedHashMap<>();

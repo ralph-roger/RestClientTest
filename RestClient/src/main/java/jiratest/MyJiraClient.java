@@ -70,6 +70,7 @@ public class MyJiraClient {
 	
 	public String createIssue(String projectKey, Long issueType, String issueSummary) {
 	    IssueRestClient issueClient = jrc.getIssueClient(); 
+	   
 	    IssueInput newIssue = new IssueInputBuilder(
 	      projectKey, issueType, issueSummary).build();
 	    return issueClient.createIssue(newIssue).claim().getKey();

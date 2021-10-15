@@ -1,10 +1,14 @@
 package com.example.httpclient;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+
 
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpContent;
@@ -20,6 +24,7 @@ import com.google.api.client.json.JsonObjectParser;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.Key;
 import com.google.gson.reflect.TypeToken;
+import static com.google.api.client.util.IOUtils.copy;
 
 public class StartClass {
 
@@ -49,11 +54,11 @@ public class StartClass {
 		System.out.println("Start");
 		getRequestWithQueryParameters();
 
-		postRequestFormUrlencoded();
+		//postRequestFormUrlencoded();
 
-		postSimpleJsonData();
+		//postSimpleJsonData();
 
-		postComplexJsonData();
+		//postComplexJsonData();
 
 		parsePublicApiJsonResponse();
 		System.out.println("ENDE");
@@ -65,13 +70,59 @@ public class StartClass {
 	 * @throws IOException
 	 */
 	private static void getRequestWithQueryParameters() throws IOException {
+		System.out.println("=================> Hallo hier im getReq.....");
 		GenericUrl url = new GenericUrl(TEST_URL);
 		url.put("arg1", true);
 		url.put("arg2", 45);
 		HttpRequest req = reqFactory().buildGetRequest(url);
 		@SuppressWarnings("unused")
 		HttpResponse resp = req.execute();
+		System.out.println("=================> Hallo hier im getReq..... + resp " + resp.getStatusMessage() + " > " + resp.getStatusCode());
+		System.out.println("====> fromStream ======");
+		//System.out.println(doGetContentFromStream(resp)); 
+		System.out.println("====> neu =============");
+		System.out.println(" ======> " + doGetContent(resp));
+
 	}
+	
+	private static String doGetContentFromStream(HttpResponse resp) {
+		InputStream in = null;
+		try {
+			in = resp.getContent();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		int data;
+		String out = "";
+		try {
+			data = in.read();
+			while(data != -1) {
+			  //do something with data...
+				out = out + String.valueOf(data);
+			    data = in.read();
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+	        try {
+				in.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	    } 
+		
+		return " HIER OUT: " + out;
+	}
+	
+	private static String doGetContent(HttpResponse response) throws IOException {
+	    try (InputStream is = response.getContent(); ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
+	      copy(is, bos);
+	      return new String(bos.toByteArray(), response.getContentCharset());
+	    }
+	  }
 
 	/**
 	 * Parse the JSON response of the public Github API.
