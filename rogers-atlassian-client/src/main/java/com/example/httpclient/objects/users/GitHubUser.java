@@ -1,4 +1,4 @@
-package com.example.httpclient;
+package com.example.httpclient.objects.users;
 import com.google.api.client.json.GenericJson;
 import com.google.api.client.util.Key;
 
@@ -10,6 +10,10 @@ public class GitHubUser extends GenericJson{
     private long id;
     @Key("email")
     private String email;
+    @Key("avatar_url")
+    private String avatarUrl;
+    
+    		
  
  // standard getters and setters
     
@@ -30,6 +34,12 @@ public class GitHubUser extends GenericJson{
 	}
 	public void setEmail(String email) {
 		this.email = email;
+	}
+	public String getAvatar() {
+		return avatarUrl;
+	}
+	public void setAvatarUrl(String avatarUrl) {
+		this.avatarUrl = avatarUrl;
 	}
  
     

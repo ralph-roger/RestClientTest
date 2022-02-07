@@ -27,3 +27,4 @@ bin/
 *.tar.gz
 *.rar
 /.metadata/
+/.recommenders/

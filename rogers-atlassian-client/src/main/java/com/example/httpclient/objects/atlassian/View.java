@@ -1,4 +1,4 @@
-package com.example.httpclient.objects;
+package com.example.httpclient.objects.atlassian;
 
 import com.google.api.client.util.Key;
 

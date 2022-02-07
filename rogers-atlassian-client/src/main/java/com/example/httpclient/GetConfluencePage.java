@@ -6,8 +6,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.example.httpclient.objects.Content2;
-import com.example.httpclient.objects.Results;
+import com.example.httpclient.objects.atlassian.Content2;
+import com.example.httpclient.objects.atlassian.Results;
+import com.example.httpclient.objects.users.GitHubUser;
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpContent;
 import com.google.api.client.http.HttpRequest;

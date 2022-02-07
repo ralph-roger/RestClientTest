@@ -1,4 +1,4 @@
-package com.example.httpclient.objects;
+package com.example.httpclient.objects.atlassian;
 
 public class Restrictions {
 

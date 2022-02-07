@@ -1,15 +1,16 @@
 package com.example.httpclient;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.io.IOUtils;
 
-
+import com.example.httpclient.objects.users.GitHubUser;
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpContent;
 import com.google.api.client.http.HttpRequest;
@@ -24,7 +25,6 @@ import com.google.api.client.json.JsonObjectParser;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.Key;
 import com.google.gson.reflect.TypeToken;
-import static com.google.api.client.util.IOUtils.copy;
 
 public class StartClass {
 
@@ -52,15 +52,15 @@ public class StartClass {
 
 	public static void main(String[] args) throws IOException, NoSuchFieldException, SecurityException {
 		System.out.println("Start");
+		// Request und Ausgabe der Response
 		getRequestWithQueryParameters();
-
-		//postRequestFormUrlencoded();
-
-		//postSimpleJsonData();
-
-		//postComplexJsonData();
-
+		// Simpler Post
+		postSimpleJsonData();
+		// Post mit einem Objekt als Variable
+		postComplexJsonData();
+		// Aufruf Github API Liste der User 
 		parsePublicApiJsonResponse();
+		
 		System.out.println("ENDE");
 	}
 
@@ -70,87 +70,33 @@ public class StartClass {
 	 * @throws IOException
 	 */
 	private static void getRequestWithQueryParameters() throws IOException {
-		System.out.println("=================> Hallo hier im getReq.....");
 		GenericUrl url = new GenericUrl(TEST_URL);
 		url.put("arg1", true);
 		url.put("arg2", 45);
-		HttpRequest req = reqFactory().buildGetRequest(url);
-		@SuppressWarnings("unused")
-		HttpResponse resp = req.execute();
-		System.out.println("=================> Hallo hier im getReq..... + resp " + resp.getStatusMessage() + " > " + resp.getStatusCode());
-		System.out.println("====> fromStream ======");
-		//System.out.println(doGetContentFromStream(resp)); 
-		System.out.println("====> neu =============");
-		System.out.println(" ======> " + doGetContent(resp));
+		HttpResponse resp = reqFactory().buildGetRequest(url).execute();
+		System.out.println("=================> getReqWithParameters " + resp.getStatusMessage() + " > " + resp.getStatusCode());
+		System.out.println(doGetContentFromStream(resp)); 
+	}
 
-	}
-	
-	private static String doGetContentFromStream(HttpResponse resp) {
-		InputStream in = null;
-		try {
-			in = resp.getContent();
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		int data;
-		String out = "";
-		try {
-			data = in.read();
-			while(data != -1) {
-			  //do something with data...
-				out = out + String.valueOf(data);
-			    data = in.read();
-			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally {
-	        try {
-				in.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-	    } 
-		
-		return " HIER OUT: " + out;
-	}
-	
-	private static String doGetContent(HttpResponse response) throws IOException {
-	    try (InputStream is = response.getContent(); ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
-	      copy(is, bos);
-	      return new String(bos.toByteArray(), response.getContentCharset());
-	    }
-	  }
 
 	/**
-	 * Parse the JSON response of the public Github API.
+	 * Submit an x-www-form-urlencoded POST request (like submitting an ordinary
+	 * HTML form)
 	 *
 	 * @throws IOException
 	 */
-	private static void parsePublicApiJsonResponse() throws IOException {
-		GenericUrl url = new GenericUrl("https://api.github.com/users");
-		url.put("per_page", 5);
-		HttpRequest req = reqFactory().buildGetRequest(url);
-		// Set the parser to use for parsing the returned JSON data
-		req.setParser(new JsonObjectParser(JSON_FACTORY));
-
-		// Use GSON's TypeToken to let the parser know to expect a List<GithubUser>
-		Type type = new TypeToken<List<GitHubUser>>() {}.getType();
-
-		@SuppressWarnings("unchecked")
-		List<GitHubUser> users = (List<GitHubUser>) req.execute().parseAs(type);
-		if (null != users && !users.isEmpty()) {
-			System.out.println("GithubUser 0: " +users.size() + " ---- " + users.get(0));
-		}
-		int i = 0;
-		for (GitHubUser gitHubUser : users) {
-			System.out.println("Github users " + ++i + " - " + gitHubUser);
-			gitHubUser.getId(); 
-		}
+	private static void postSimpleJsonData() throws IOException {
+		GenericUrl url = new GenericUrl(TEST_URL);
+		Map<String, Object> data = new LinkedHashMap<>();
+		data.put("arg1", true);
+		data.put("arg2", 45);
+		HttpContent content = new UrlEncodedContent(data);
+		HttpResponse resp = reqFactory().buildPostRequest(url, content).execute();
+		System.out.println(doGetContentFromStream(resp)); 
+		
 	}
 
+	
 	/**
 	 * Submit a POST request with JSON data in the payload where the value of one of
 	 * the properties is an object (not just a primitive type).
@@ -167,37 +113,8 @@ public class StartClass {
 		customDto.name = "Harshdeep S Jawanda";
 		data.put("arg3", customDto);
 		HttpContent content = new JsonHttpContent(JSON_FACTORY, data);
-		reqFactory().buildPostRequest(url, content).execute();
-	}
-
-	/**
-	 * Submit an x-www-form-urlencoded POST request (like submitting an ordinary
-	 * HTML form)
-	 *
-	 * @throws IOException
-	 */
-	private static void postRequestFormUrlencoded() throws IOException {
-		GenericUrl url = new GenericUrl(TEST_URL);
-		Map<String, Object> data = new LinkedHashMap<>();
-		data.put("arg1", true);
-		data.put("arg2", 45);
-		HttpContent content = new UrlEncodedContent(data);
-		reqFactory().buildPostRequest(url, content).execute();
-	}
-
-	/**
-	 * Submit a POST request with simple JSON data in the payload (i.e., where the
-	 * values of all properties are primitives).
-	 *
-	 * @throws IOException
-	 */
-	private static void postSimpleJsonData() throws IOException {
-		GenericUrl url = new GenericUrl(TEST_URL);
-		Map<String, Object> data = new LinkedHashMap<>();
-		data.put("arg1", true);
-		data.put("arg2", 45);
-		HttpContent content = new JsonHttpContent(JSON_FACTORY, data);
-		reqFactory().buildPostRequest(url, content).execute();
+		HttpResponse resp = reqFactory().buildPostRequest(url, content).execute();
+		System.out.println(doGetContentFromStream(resp)); 
 	}
 
 	/**
@@ -213,5 +130,51 @@ public class StartClass {
 		private String name;
 
 	}
+	
+	/**
+	 * Parse the JSON response of the public Github API.
+	 *
+	 * @throws IOException
+	 */
+	private static void parsePublicApiJsonResponse() throws IOException {
+		GenericUrl url = new GenericUrl("https://api.github.com/users");
+		url.put("per_page", 10);
+		HttpRequest req = reqFactory().buildGetRequest(url);
+		// Set the parser to use for parsing the returned JSON data
+		req.setParser(new JsonObjectParser(JSON_FACTORY));
 
+		// Use GSON's TypeToken to let the parser know to expect a List<GithubUser>
+		Type type = new TypeToken<List<GitHubUser>>() {}.getType();
+
+		@SuppressWarnings("unchecked")
+		List<GitHubUser> users = (List<GitHubUser>) req.execute().parseAs(type);
+		if (null != users && !users.isEmpty()) {
+			System.out.println("GithubUser 0: " + users.size() + " ---- " + users.get(0));
+		}
+		int i = 0;
+		for (GitHubUser gitHubUser : users) {
+			System.out.println(gitHubUser.getLogin() + " " + ++i + " - " + gitHubUser);
+			gitHubUser.getId(); 
+		}
+	}
+	
+	/**
+	 * Hole den Content from response
+	 * @param response the response of the Server 
+	 * @return Content as String
+	 * @throws IOException
+	 */
+	private static String doGetContentFromStream(HttpResponse resp) {
+		
+		String out = "";
+		// Ab der Java-Version 7 ist es möglich, durch ein try-with-resources Statement dies erheblich 
+		// zu vereinfachen und das Schließen des Stroms automatisch auszuführen.
+		try (InputStream in = resp.getContent();) {		
+			out = IOUtils.toString(in,StandardCharsets.UTF_8);
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		return out;
+	}
 }
